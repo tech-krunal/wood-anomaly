@@ -1,30 +1,32 @@
 import streamlit as st
+
+# 🪵 Must be the very first Streamlit command
+st.set_page_config(page_title="Wood Anomaly Detector", page_icon="🪵", layout="centered")
+
+# Standard imports
 import numpy as np
 from PIL import Image, ImageOps
 import os
 import gdown
 from keras.models import load_model
 
-# Download model from Google Drive if not already present
+# Constants
 MODEL_PATH = "keras_model.h5"
-# https://drive.google.com/file/d/1Z5x7LX7TMOTszHaA2xoCzdplWMzk5Hl4/view?usp=drive_link
-GDRIVE_FILE_ID = "1Z5x7LX7TMOTszHaA2xoCzdplWMzk5Hl4"  # <-- REPLACE THIS
+GDRIVE_FILE_ID = "1Z5x7LX7TMOTszHaA2xoCzdplWMzk5Hl4"  # Google Drive file ID
 
+# Function to download model if not present
 def download_model():
     if not os.path.exists(MODEL_PATH):
-        st.info("Downloading model from Google Drive...")
+        st.info("📥 Downloading model from Google Drive...")
         gdown.download(f"https://drive.google.com/uc?id={GDRIVE_FILE_ID}", MODEL_PATH, quiet=False)
-        st.success("Model downloaded!")
+        st.success("✅ Model downloaded successfully!")
 
+# Download and load model
 download_model()
-
-# Load model and labels
 model = load_model(MODEL_PATH, compile=False)
 class_names = open("labels.txt", "r").readlines()
 
-# UI setup
-st.set_page_config(page_title="Wood Anomaly Detector", page_icon="🪵", layout="centered")
-
+# UI Header
 st.markdown("""
     <div style="background-color:#0D9488;padding:1rem;border-radius:10px;margin-bottom:1rem;">
         <h1 style="color:white;text-align:center;">🪵 Wood Anomaly Detector</h1>
@@ -32,6 +34,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
+# Custom Styles
 st.markdown("""
     <style>
         .main { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
@@ -46,6 +49,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Sidebar
 with st.sidebar:
     st.title("🧾 Project Info")
     st.subheader("Wood Anomaly Detector")
@@ -54,12 +58,12 @@ with st.sidebar:
     st.subheader("📂 Classes Detected")
     st.markdown("- ✅ Good\n- ❌ Anomaly (hole, scratch, liquid, etc.)")
     st.markdown("---")
-    st.write("Created by: *Kushal Parekh*")
 
+# Main UI
 st.title("🪵 Wood Anomaly Detection System")
 st.caption("Upload or capture an image to check if it's GOOD or has ANOMALY.")
 
-# Image input
+# Input method
 input_method = st.radio("Choose Input Method", ["📁 Upload Image", "📷 Use Camera"])
 image = None
 
@@ -82,7 +86,7 @@ elif input_method == "📷 Use Camera":
         except Exception as e:
             st.error(f"Error loading camera image: {e}")
 
-# Prediction
+# Prediction logic
 def predict_image(img):
     size = (224, 224)
     img = ImageOps.fit(img, size, Image.Resampling.LANCZOS)
@@ -106,6 +110,7 @@ def show_prediction_result(class_name, confidence):
         st.progress(min(float(confidence), 1.0))
         st.markdown(f"**Prediction Breakdown**\n\n🟩 Good: {100 - confidence*100:.2f}%\n🟥 Anomaly: {confidence*100:.2f}%")
 
+# Run prediction
 if st.button("🔍 Run Detection") and image:
     with st.spinner("Analyzing image..."):
         result, confidence = predict_image(image)

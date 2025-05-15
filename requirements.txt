@@ -1,6 +1,6 @@
 streamlit==1.30.0
 numpy==1.24.0
 pillow==10.0.0
-tensorflow==2.15.0
+tensorflow==2.13.0
 setuptools==68.2.2
 gdown==5.1.0

@@ -1,0 +1,7 @@
+[theme]
+base="light"
+primaryColor="#0D9488"  # Teal-600
+backgroundColor="#ECFDF5"  # Teal-50
+secondaryBackgroundColor="#CCFBF1"  # Teal-100
+textColor="#0F172A"  # Slate-900
+font="sans serif"
